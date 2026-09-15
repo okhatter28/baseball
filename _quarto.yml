@@ -11,3 +11,6 @@ website:
 format:
   html:
     theme: cosmo
+
+execute:
+  echo: false
