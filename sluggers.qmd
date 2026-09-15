@@ -1,0 +1,52 @@
+---
+title: "Sluggers"
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(Lahman)
+```
+
+```{r}
+Batting |>
+  group_by(playerID) |>
+  summarise(HR = sum(HR, na.rm = TRUE),
+            first = min(yearID),
+            last = max(yearID),
+            .groups = "drop") |>
+  slice_max(HR, n = 15) |>
+  left_join(People, by = "playerID") |>
+  mutate(player = paste(nameFirst, nameLast),
+         steroid_era = last >= 1994 & first <= 2009) |>
+  ggplot(aes(x = HR, y = fct_reorder(player, HR), fill = steroid_era)) +
+  geom_col() +
+  scale_fill_manual(
+    values = c(`FALSE` = "grey65", `TRUE` = "navy"),
+    labels = c("No", "Yes"),
+    name = "Active 1994-2009"
+  ) +
+  labs(
+    title = "Most career home run leaders played in the steroid era",
+    subtitle = "Top 15 in MLB history",
+    x = "Career home runs",
+    y = NULL,
+    caption = "Source: Lahman Batting and People tables"
+  )
+```
+
+```{r}
+Batting |>
+  filter(playerID == "bondsba01") |>
+  group_by(yearID) |>
+  summarise(HR = sum(HR), .groups = "drop") |>
+  ggplot(aes(x = yearID, y = HR)) +
+  geom_col(fill = "navy") +
+  labs(
+    title = "Barry Bonds hit more home runs in his late 30s than ever before",
+    subtitle = "Home runs per season; the 73 in 2001 is still the single-season record",
+    x = "Season",
+    y = "Home runs",
+    caption = "Source: Lahman Batting table"
+  )
+```
