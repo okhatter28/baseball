@@ -7,6 +7,9 @@ title: "Home runs"
 library(tidyverse)
 library(Lahman)
 
-Teams |> 
-  select(yearID, name, G, HR)
+Teams |>
+  group_by(yearID) |>
+  summarise(HR = sum(HR, na.rm = TRUE),
+            team_games = sum(G),
+            .groups = "drop")
 ```
